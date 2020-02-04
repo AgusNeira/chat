@@ -25,31 +25,32 @@ public:
 		if((ret = getaddrinfo(NULL, PORT, &hints, &res)) != 0){
 			fprintf(stderr, "getaddrinfo: %s\n", gai_strerror(ret));
 			*status = -1;
-		} else {
+			return;
+		}
 
-			for (p = res; p != NULL; p = p->ai_next){
+		for (p = res; p != NULL; p = p->ai_next){
 			this->sockfd = socket(p->ai_family, p->ai_socktype, p->ai_protocol);
-				if (listener < 0){
-					continue;
-				}
-
-				setsockopt(this->sockfd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int));
-
-				if(bind(this->sockfd, p->ai_addr, p->ai_addrlen) < 0){
-					close(this->sockfd);
-					continue;
-				}
-				break;
+			if (listener < 0){
+				continue;
 			}
 
-			if (p == NULL){
-				*status = -1;
-			} else {
+			setsockopt(this->sockfd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int));
 
-				if (listen(this->sockfd, 10) == -1){
-					*status = -1;
-				}
+			if(bind(this->sockfd, p->ai_addr, p->ai_addrlen) < 0){
+				close(this->sockfd);
+				continue;
 			}
+			break;
+		}
+
+		if (p == NULL){
+			*status = -1;
+			return;
+		}
+
+		if (listen(this->sockfd, 10) == -1){
+			*status = -1;
+			return;
 		}
 
 		freeaddrinfo(res);
@@ -62,7 +63,15 @@ public:
 		return accept(this->sockfd);
 	}
 
-	static get_in_addr(struct sockaddr *sa);
+	static get_in_addr(struct sockaddr *sa){
+
+		if (sa->sa_family == AF_INET){
+			return &(((struct sockaddr_in *) sa)->sin_addr);
+		} else if (sa->sa_family == AF_INET6){
+			return &(((struct sockaddr_in6 *) sa)->sin6_addr);
+		}
+		return nullptr;
+	}
 
 private:
 	int sockfd;
