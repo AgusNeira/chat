@@ -9,9 +9,9 @@
 #include <netdb.h>
 #include <poll.h>
 
-class Server {
+class Listener {
 public:
-	Server(char *port, int backlog, int *status){
+	Listener(char *port, int backlog, int *status){
 		int yes = 1;
 		int ret;
 
@@ -57,7 +57,7 @@ public:
 		*status = 0;
 	}
 
-	~Server();
+	~Listener();
 
 	int accept(){
 		return accept(this->sockfd);

@@ -2,8 +2,6 @@
 /*
  * Circular buffer
  *
- * - Dynamically allocated
- * - Size checking
  * 
  */
 
@@ -41,6 +39,7 @@ public:
 		if (head_ >= tail_) return head_ - tail_;
 		else return head_ + size_ - tail_;
 	}
+	int size(){ return size_; }
 
 private:
 	std::mutex buff_mutex;
