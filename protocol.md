@@ -1,4 +1,4 @@
-### Protocol details
+# Protocol details
 
 Each message sent is preceded by the following 2-byte header:
 
@@ -9,7 +9,7 @@ Optional extra bytes might be added according to the opcode
 
 ## Opcodes:
 
-# Messages
+### Messages
 
 + 0x00: global message (`MSG_GLOBAL`)
 	Extra bytes:
@@ -19,7 +19,7 @@ Optional extra bytes might be added according to the opcode
 	- Sender (1 nyte)
 	- Receiver (1 byte)
 
-# Users
+### Users
 
 + 0x02: user identification (`USR_ID`)
 	When opened, the client program will prompt for a username.
