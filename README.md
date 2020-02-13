@@ -10,7 +10,7 @@ versions might implement a GUI (like Qt) to be used in Windows.
 
 This project is under heavy development, and it isn't functional yet.
 
-## Contribución
+## Contributions
 
 This is a personal project, and thus I currently won't accept any contributions
 

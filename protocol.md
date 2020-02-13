@@ -36,3 +36,5 @@ Optional extra bytes might be added according to the opcode
 	- User ID (1 byte)
 	- Username size (1 byte) (max 16)
 	- Username (_n_ bytes)
+
+	The user tables are sent after the client has been identified (after `USR_ID` exchange)

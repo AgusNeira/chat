@@ -45,6 +45,8 @@ public:
 	int do_poll(){
 		return poll(this->fds, this->count, -1);
 	}
+
+	int size(){ return this->size; }
 	
 private:
 	struct pollfd *fds;

@@ -63,6 +63,8 @@ public:
 		return accept(this->sockfd);
 	}
 
+	explicit operator int(){ return this->sockfd; }
+
 	static get_in_addr(struct sockaddr *sa){
 
 		if (sa->sa_family == AF_INET){

@@ -3,22 +3,36 @@
 
 #include "endpoint.hpp"
 #include "pollmanager.hpp"
+#include "protocol.hpp"
 
-int main(){
-	const char host[] = "localhost";
-	const char port[] = "9034";
+/*
+ * Client prototype
+ *
+ * Protocol compliant
+ *
+ * Global messages
+ * User identification
+ *
+ */
+
+int main(int argc, char *argv[]){
+	if (argc != 3){
+		std::cout<<"Usage: "<<argv[0]<<" <host> <port>\n";
+		exit(0);
+	}
+
 	int len = 256;
 	int status;
 
 	char buff[256];
-	Endpoint endpoint(host, port, &status);
-	PollManager pollmg(2);
+	Endpoint endpoint(argv[1], argv[2], &status);
 
 	if (status != 0){
-		std::cerr<<"Couldn't open endpoint to "<<host<<" in port "<<port<<std::endl;
+		std::cerr<<"Couldn't open endpoint to "<<argv[1]<<" in port "<<argv[2]<<std::endl;
 		exit(1);
 	}
 
+	PollManager pollmg(2);
 	pollmg.add_fd((int) endpoint);
 	pollmg.add_fd(0); // stdin
 
@@ -29,7 +43,7 @@ int main(){
 			for (int i = 0; i < 2; i++){
 				if (pollmg[i]->revents & POLLIN){
 					if (pollmg[i]->fd == 0){
-						std::cin.getline(buff, 256);
+						std::cin.getline((buff + 3), 253); // First 3 bytes will be used as header
 						len = strlen(buff);
 						printf("About to send %d bytes\n", len);
 
