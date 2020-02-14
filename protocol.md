@@ -24,6 +24,8 @@ Optional extra bytes might be added according to the opcode
 
 ### Users
 
+A username may be of up to 20 characters, and user IDs are always 1-byte long (max 256 users)
+
 + 0x02: user identification (`USR_ID`)\
 	When opened, the client program will prompt for a username.
 	Upon connection, the username will be sent to the server under this opcode
