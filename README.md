@@ -16,4 +16,4 @@ This is a personal project, and thus I currently won't accept any contributions
 
 ## License
 
-[MIT](https://choosealicense.com/licenses/mit/)
+[GPL v3.0](https://choosealicense.com/licenses/gpl-3.0/)
