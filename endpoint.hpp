@@ -9,6 +9,22 @@
 #include <netdb.h>
 #include <poll.h>
 
+#include "protocol.hpp"
+
+/*
+ * Endpoint class
+ *
+ * An endpoint is a wrapper for a socket, implementing functions
+ * for connection and message exchanging. Note that the functions
+ * recv_msg and send_msg parse the 2-byte header specified in
+ * protocol.md. Extra bytes must be added in the buffer before the
+ * actual message.
+ *
+ * Endpoints should be used with 256-bytes buffers. If less, the
+ * receiving method might crash.
+ *
+ */
+
 class Endpoint {
 public:
 	Endpoint(int sockfd): sockfd(sockfd) {};
@@ -64,23 +80,43 @@ public:
 		return recv(this->sockfd, buff, len, 0);
 	}
 
-	int sendall(char* buff, int *len){
+	int recv_msg(char *buffer, int len = 256){
+		int temp_len = recv(this->sockfd, buff, 2, 0);
+		int total;
+
+		if (temp_len != 2) return -1;
+		total = 2;
+
+		temp_len = buffer[MSG_SIZE];
+		temp_len -= 2;
+		
+		while (temp_len > 0){
+			int n = recv(this->sockfd, buff + total, temp_len, 0);
+
+			if (n == -1) return -1;
+
+			temp_len -= n;
+			total += n;
+		}
+
+		return total;
+	}
+	int send_msg(char *buffer){
 		int total = 0;
-		int bytesleft = *len;
+		int bytesleft = buffer[MSG_SIZE];
 		int n;
 		
-		while (total < *len){
+		while (bytesleft > 0){
 			n = send(this->sockfd, buff + total, bytesleft, 0);
 
-			if (n == -1) break;
+			if (n == -1) return -1;
 			total += n;
 			bytesleft -= n;
 		}
 
-		*len = total;
-
-		return n == -1 ? -1 : 0;
+		return  0;
 	}
+
 
 	static void *get_in_addr(struct sockaddr *sa){
 
