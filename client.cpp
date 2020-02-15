@@ -1,9 +1,11 @@
 #include <iostream>
 #include <cstring>
 
-#include "endpoint.hpp"
+#include "bufferedendpoint.hpp"
 #include "pollmanager.hpp"
 #include "protocol.hpp"
+#include "user.hpp"
+
 /*
  * Client prototype
  *
@@ -13,8 +15,6 @@
  * User identification
  *
  */
-
-int proto_recv(Endpoint *ep, char *buffer, int max);
 
 int main(int argc, char *argv[]){
 
@@ -34,11 +34,10 @@ int main(int argc, char *argv[]){
 	int len;
 	int status;
 
-	char buff[256];
 	char username[20];
 	int user_id;
 
-	Endpoint endpoint(argv[1], argv[2], &status);
+	BufferedEndpoint endpoint(argv[1], argv[2], &status);
 
 	if (status != 0){
 		std::cerr<<"Couldn't open endpoint to "<<argv[1]<<" in port "<<argv[2]<<std::endl;
@@ -49,30 +48,37 @@ int main(int argc, char *argv[]){
 	pollmg.add_fd((int) endpoint);
 	pollmg.add_fd(0); // stdin
 
+	UserTables usrTables;
+
 	/*
 	 * Log-in to server
 	 */
 
 	std::cout<<"Welcome!\nWhat's your name?: ";
-	std::cin.getline(username, 20);
-
-	len = std::strlen(username) + HEADER_SIZE;
-	buff[OP_CODE] = USR_ID;
-	buff[MSG_SIZE] = len;
-	std::strcpy(buff + HEADER_SIZE, username);
-	
-	endpoint.send_msg(buff);
+	endpoint.set(OP_CODE, USR_ID);
+	endpoint.stdin_to_body();
+	endpoint.send();
 
 	/*
 	 * Get user id
 	 */
 
-	endpoint.recv_msg(buff);
-	if (buff[OP_CODE] != USR_ID || buff[MSG_SIZE] != 5){
+	endpoint.receive();
+	if (endpoint.get(OP_CODE) != USR_ID || endpoint.get(MSG_SIZE) != 5){
 		std::cout<<"Oops... something went wrong\n";
 		exit(1);
 	}
-	user_id = buff[BODY];
+	user_id = endpoint.get(BODY); // It's only 1 byte
+
+	/*
+	 * Get user tables
+	 */
+	endpoint.receive();
+	if (endpoint.get(OP_CODE != USR_TABLES) {
+		std::cout<<"Oops... something went wrong\n";
+		exit(1);
+	}
+	
 
 	for(;;){
 		int revs = pollmg.do_poll();
@@ -110,3 +116,6 @@ int main(int argc, char *argv[]){
 
 	return 0;
 }
+
+void load_user_tables(Endpoint *ep, UserTables *tables){}
+

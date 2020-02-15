@@ -1,3 +1,6 @@
+#ifndef ENDPOINT_
+#define ENDPOINT_
+
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -22,6 +25,11 @@
  *
  * Endpoints should be used with 256-bytes buffers. If less, the
  * receiving method might crash.
+ *
+ * For client programs, BufferedEndpoint is implemented, in order
+ * to clarify the usage of the objects, and to avoid buffer overflows-
+ * For server programs, EndpointSet manages multiple endpoints under
+ * a multi-threaded environment, while saving memory on buffers.
  *
  */
 
@@ -81,7 +89,7 @@ public:
 	}
 
 	int recv_msg(char *buffer, int len = 256){
-		int temp_len = recv(this->sockfd, buff, 2, 0);
+		int temp_len = recv(this->sockfd, buffer, 2, 0);
 		int total;
 
 		if (temp_len != 2) return -1;
@@ -91,7 +99,7 @@ public:
 		temp_len -= 2;
 		
 		while (temp_len > 0){
-			int n = recv(this->sockfd, buff + total, temp_len, 0);
+			int n = recv(this->sockfd, buffer + total, temp_len, 0);
 
 			if (n == -1) return -1;
 
@@ -107,7 +115,7 @@ public:
 		int n;
 		
 		while (bytesleft > 0){
-			n = send(this->sockfd, buff + total, bytesleft, 0);
+			n = send(this->sockfd, buffer + total, bytesleft, 0);
 
 			if (n == -1) return -1;
 			total += n;
@@ -127,6 +135,8 @@ public:
 		}
 		return nullptr;
 	}
-private:
+protected:
 	int sockfd;
 };
+
+#endif
