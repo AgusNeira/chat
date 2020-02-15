@@ -3,15 +3,15 @@
 
 struct PollManager {
 public:
-	PollManager(int s): size(s), init_size(s) {
+	PollManager(int s): size_(s), init_size(s) {
 		this->fds = new pollfd[s];
 		this->count = 0;
 	}
 	
 	void add_fd(int newfd){
-		if (this->count == this->size){
-			this->size += this->init_size;
-			struct pollfd *newarr = new pollfd[this->size];
+		if (this->count == this->size_){
+			this->size_ += this->init_size;
+			struct pollfd *newarr = new pollfd[this->size_];
 
 			for (int i = 0; i < this->count; i++){
 				newarr[i] = this->fds[i];
@@ -34,7 +34,7 @@ public:
 	}
 
 	struct pollfd * operator[](int i){
-		if (i >= this->size) return nullptr;
+		if (i >= this->size_) return nullptr;
 		return &(this->fds[i]);
 	}
 
@@ -46,11 +46,11 @@ public:
 		return poll(this->fds, this->count, -1);
 	}
 
-	int size(){ return this->size; }
+	int size(){ return this->size_; }
 	
 private:
 	struct pollfd *fds;
 	int count;
-	int size;
+	int size_;
 	const int init_size;
 };

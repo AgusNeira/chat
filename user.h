@@ -8,25 +8,7 @@
 
 struct User {
 	User(int id, const char* name) : id(id), name(name) {}
-
-	bool operator <(const User& other) const {
-		return this->id < other.id;
-	}
-	bool operator <=(const User& other) const {
-		return this->id <= other.id;
-	}
-	bool operator >(const User& other) const {
-		return this->id > other.id;
-	}
-	bool operator >=(const User& other) const {
-		return this->id >= other.id;
-	}
-	bool operator ==(const User& other) const {
-		return this->id == other.id;
-	}
-	bool operator !=(const User& other) const {
-		return this->id != other.id;
-	}
+	User(int id, const char* name, int len) : id(id), name(name, len) {}
 
 	std::string name;
 	int id = -1;
@@ -43,17 +25,20 @@ public:
 	}
 };
 
-class UserTables {
+class UserTable {
 public:
 	typedef std::vector<User>::iterator					iterator;
 	typedef std::vector<User>::const_iterator			const_iterator;
 	typedef std::vector<User>::reverse_iterator			reverse_iterator;
 	typedef std::vector<User>::const_reverse_iterator 	const_reverse_iterator;
 	
-	UserTables() : users_() {}
+	UserTable() : users_() {}
 
 	void add(int id, char *name){
 		users_.emplace_back(id, name);
+	}
+	void add(int id, char *name, int len){
+		users_.emplace_back(id, name, len);
 	}
 	void remove(int id){
 		auto it = this->find(id);
