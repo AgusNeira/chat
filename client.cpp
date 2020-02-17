@@ -32,8 +32,6 @@ int main(int argc, char *argv[]){
 	/*
 	 * Initialization
 	 */
-
-	int len;
 	int status;
 
 	char username[20];
@@ -60,6 +58,8 @@ int main(int argc, char *argv[]){
 	endpoint.set(Header::opcode, Opcodes::UserID);
 	endpoint.stdin_to_body();
 	endpoint.send();
+
+	std::strcpy(username, endpoint.body());
 
 	/*
 	 * Get user id

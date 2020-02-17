@@ -1,8 +1,8 @@
 #ifndef BUFFERED_ENDPOINT_
 #define BUFFERED_ENDPOINT_
 
-#include "endpoint.hpp"
-#include "protocol.hpp"
+#include "endpoint.h"
+#include "protocol.h"
 
 #include <cstdio>
 #include <cstdlib>

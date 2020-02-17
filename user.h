@@ -10,8 +10,8 @@ struct User {
 	User(int id, const char* name) : id(id), name(name) {}
 	User(int id, const char* name, int len) : id(id), name(name, len) {}
 
+	int id;
 	std::string name;
-	int id = -1;
 };
 
 class UserComparator : public User {
