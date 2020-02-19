@@ -32,18 +32,17 @@ int main(int argc, char *argv[]){
 	/*
 	 * Initialization
 	 */
-	int status;
-
 	char username[20];
 	int user_id;
 
-	BufferedEndpoint endpoint(argv[1], argv[2], &status);
-
-	if (status != 0){
-		std::cerr<<"Couldn't open endpoint to "<<argv[1]<<" in port "<<argv[2]<<std::endl;
+	Endpoint<Endpoint::Client> endpoint;
+	try {
+		endpoint = Endpoint<Endpoint::Client>(argv[1], argv[2]);
+	} catch (Endpoint::ConnectionFailed &e){
+		std::cerr<<e.msg;
+		endpoint.~Endpoint();
 		exit(1);
 	}
-
 	PollManager pollmg(2);
 	pollmg.add_fd((int) endpoint);
 	pollmg.add_fd(0); // stdin
